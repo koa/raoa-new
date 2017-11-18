@@ -1,0 +1,21 @@
+spring:
+  security:
+    oauth2:
+      client:
+        provider:
+          google:
+            user-name-attribute: name
+        registration:
+          github:
+            client-id: ${GITHUB-CLIENT-ID}
+            client-secret: ${GITHUB-CLIENT-SECRET}
+            client-name: Github user
+            provider: github
+            scope: user
+            redirect-uri: http://localhost:8080/login/oauth2/code/github
+          google:
+            client-id: ${GOOGLE-CLIENT-ID}
+            client-secret: ${GOOGLE-CLIENT-SECRET}
+            client-name: Google Account
+            provider: google
+            redirect-uri: http://localhost:8080/login/oauth2/code/google
