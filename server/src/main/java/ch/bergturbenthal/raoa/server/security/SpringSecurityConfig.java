@@ -1,8 +1,15 @@
 package ch.bergturbenthal.raoa.server.security;
 
+import java.net.URI;
+import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -21,6 +28,11 @@ import org.springframework.security.oauth2.core.user.OAuth2UserAuthority;
 
 import com.vaadin.spring.annotation.UIScope;
 
+import ch.bergturbenthal.raoa.server.configuration.RaoaProperties;
+import ch.bergturbenthal.raoa.server.model.configuration.AccessLevel;
+import ch.bergturbenthal.raoa.server.model.configuration.UserData;
+import ch.bergturbenthal.raoa.server.model.configuration.UserData.UserDataBuilder;
+import ch.bergturbenthal.raoa.server.service.RuntimeConfigurationService;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -29,6 +41,10 @@ import lombok.extern.slf4j.Slf4j;
 public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     // @Resource(name = "authService")
     // private UserDetailsService userDetailsService;
+    @Autowired
+    private RaoaProperties              properties;
+    @Autowired
+    private RuntimeConfigurationService runtimeConfigurationService;
 
     @Bean
     public OAuth2AuthorizedClientService authorizedClientService(final ClientRegistrationRepository clientRegistrationRepository) {
@@ -47,13 +63,37 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 if (grantedAuthority instanceof OAuth2UserAuthority) {
                     final OAuth2UserAuthority new_name = (OAuth2UserAuthority) grantedAuthority;
                     final Map<String, Object> attributes = new_name.getAttributes();
-                    final Object email = attributes.get("email");
-                    if ("andreas.koenig@berg-turbenthal.ch".equals(email)) {
-                        ret.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
+                    final String email = (String) attributes.get("email");
+                    runtimeConfigurationService.editGlobalConfiguration(c -> {
+                        final HashMap<String, UserData> updatedUsers = new HashMap<>(c.getKnownUsers());
+                        UserDataBuilder userDataBuilder;
+                        final UserData existingUser = updatedUsers.get(email);
+                        if (existingUser == null) {
+                            userDataBuilder = UserData.builder().createdAt(Instant.now()).globalAccessLevel(AccessLevel.NONE)
+                                    .admin(properties.getAdminEmail().equals(email));
+                        } else {
+                            userDataBuilder = existingUser.toBuilder();
+                        }
+                        final UserData userData = userDataBuilder.lastAccess(Instant.now()).build();
+                        if (userData.isAdmin()) {
+                            ret.add(new SimpleGrantedAuthority(Roles.ADMIN));
+                        }
+                        switch (userData.getGlobalAccessLevel()) {
+                            case READ:
+                                ret.add(new SimpleGrantedAuthority(Roles.SHOW));
+                                break;
+                            case NONE:
+                                break;
+                            default:
+                                break;
+                        }
+                        updatedUsers.put(email, userData);
+                        return c.toBuilder().knownUsers(Collections.unmodifiableMap(updatedUsers)).build();
+                    });
+
+                    for (final Entry<String, Object> attrEntry : attributes.entrySet()) {
+                        log.info(attrEntry.getKey() + ": " + attrEntry.getValue());
                     }
-                    // for (final Entry<String, Object> attrEntry : attributes.entrySet()) {
-                    // log.info(attrEntry.getKey() + ": " + attrEntry.getValue());
-                    // }
                 }
             }
             return ret;
@@ -91,9 +131,24 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @UIScope
     @Bean
-    public OAuth2User currentUser() {
+    public AuthenticatedUser currentUser() {
         final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         final Object principal = authentication.getPrincipal();
-        return (OAuth2User) principal;
+        final OAuth2User oauthUser = (OAuth2User) principal;
+        final Map<String, Object> attributes = oauthUser.getAttributes();
+        final String username = (String) attributes.get("name");
+
+        final Optional<String> email = Optional.ofNullable((String) attributes.get("email"));
+        final Optional<URI> picture;
+        if (attributes.containsKey("picture")) {
+            picture = Optional.of((String) attributes.get("picture")).map(s -> URI.create(s));
+        } else if (attributes.containsKey("avatar_url")) {
+            picture = Optional.of((String) attributes.get("avatar_url")).map(s -> URI.create(s));
+        } else {
+            picture = Optional.empty();
+        }
+        return AuthenticatedUser.builder().name(username).attributes(attributes).authorities(authentication.getAuthorities()).email(email)
+                .picture(picture).build();
+
     }
 }
