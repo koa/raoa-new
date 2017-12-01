@@ -105,10 +105,6 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 .permitAll().antMatchers("/authorized", "/**", "/").authenticated().and().oauth2Login().loginPage("/login").userInfoEndpoint()
                 .userAuthoritiesMapper(userAuthoritiesMapper);
 
-        // http.csrf().disable().exceptionHandling().authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/login"))
-        // .accessDeniedPage("/accessDenied").and().authorizeRequests()
-        // .antMatchers("/VAADIN/**", "/PUSH/**", "/UIDL/**", "/login", "/login/**", "/error/**", "/accessDenied/**", "/vaadinServlet/**")
-        // .permitAll().antMatchers("/authorized", "/**").fullyAuthenticated().and().oauth2Login();
     }
 
     // @Override
