@@ -98,10 +98,11 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
             }
             return ret;
         };
+
         http.csrf().disable().authorizeRequests()
                 .antMatchers("/VAADIN/**", "/PUSH/**", "/UIDL/**", "/login", "/login/**", "/error/**", "/accessDenied/**", "/vaadinServlet/**",
                         "/oauth2/**")
-                .permitAll().antMatchers("/authorized", "/**", "/").authenticated().and().oauth2Login().userInfoEndpoint()
+                .permitAll().antMatchers("/authorized", "/**", "/").authenticated().and().oauth2Login().loginPage("/login").userInfoEndpoint()
                 .userAuthoritiesMapper(userAuthoritiesMapper);
 
         // http.csrf().disable().exceptionHandling().authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/login"))
