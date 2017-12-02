@@ -23,7 +23,10 @@ node {
 	     }else if (params.build != 'update-dependencies'){
 	       sh "'${mvnHome}/bin/mvn' -s $MAVEN_SETTINGS -e clean deploy -DperformRelease=true"
 	     }
+       }
    }
+   stage('Docker build'){
+       docker.build("my-image:latest")
    }
    stage('Results') {
       archive 'target/*.jar'
