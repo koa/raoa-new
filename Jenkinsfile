@@ -28,7 +28,10 @@ node {
        }
    }
    stage('Docker build'){
-     sh "'${dockerHome}/docker/docker' build server"
+     docker.withRegistry('https://docker-snapshot.berg-turbenthal.ch', '2190cf3e-ae3c-48a6-84ba-454a7e9a7b7c') {
+       sh "'${dockerHome}/docker/docker' build server -t docker-snapshot.berg-turbenthal.ch/raoa-new-server:latest"
+       sh "'${dockerHome}/docker/docker' push docker-snapshot.berg-turbenthal.ch/raoa-new-server:latest"
+     }
    }
    stage('Results') {
       archive 'target/*.jar'
