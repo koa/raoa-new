@@ -13,10 +13,10 @@ import lombok.extern.slf4j.Slf4j;
 @Controller
 public class LoginController {
     @RequestMapping("/login")
-    public String login(@RequestParam(name = "error", required = false) final boolean error,
+    public String login(@RequestParam(name = "error", required = false) final String error,
             @SessionAttribute(name = WebAttributes.AUTHENTICATION_EXCEPTION, required = false) final AuthenticationException exception) {
-        if (error) {
-            log.info("Error");
+        if (error != null) {
+            log.info("Error: " + error);
         }
         if (exception != null) {
             log.warn("Error on login", exception);
