@@ -13,10 +13,8 @@ node {
    checkout([$class: 'GitSCM',
        extensions: [[$class: 'CleanCheckout'],[$class: 'LocalBranch', localBranch: "master"]]])
    def mvnHome
-   def dockerHome
    stage('Preparation') {
       mvnHome = tool 'Maven 3.5.2'
-      dockerHome = tool 'docker'
    }
    configFileProvider([configFile(fileId: '83ccdf5b-6b19-4cd7-93b6-fdffb55cefa9', variable: 'MAVEN_SETTINGS')])  {
 	   stage('Build') {
