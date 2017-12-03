@@ -28,7 +28,7 @@ node {
        }
    }
    stage('Docker build'){
-     sh "'${dockerHome}/docker' build server"
+     sh "'${dockerHome}/docker/docker' build server"
    }
    stage('Results') {
       archive 'target/*.jar'
