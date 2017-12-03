@@ -2,3 +2,4 @@
 /.factorypath
 /.project
 /target
+/kubernetes-secret.yaml

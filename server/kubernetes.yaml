@@ -1,0 +1,107 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: raoa
+  namespace: raoa-dev
+spec:
+  ports:
+  - port: 8080
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    run: raoa
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    run: raoa
+  name: raoa
+  namespace: raoa-dev
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: raoa
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        run: raoa
+    spec:
+      containers:
+      - image: docker-snapshot.berg-turbenthal.ch/raoa-new-server:latest
+        imagePullPolicy: Always
+        name: test
+        ports:
+        - containerPort: 8080
+        env:
+        - name: GOOGLE-CLIENT-ID
+          valueFrom:
+            secretKeyRef:
+              name: google
+              key: clientId
+        - name: GOOGLE-CLIENT-SECRET
+          valueFrom:
+            secretKeyRef:
+              name: google
+              key: clientSecret
+        - name: APPLICATION-ROOT-URL
+          value: https://raoa-dev.berg-turbenthal.ch/
+        resources:
+          requests:
+            cpu: 2
+            memory: 3Gi
+          limits:
+            cpu: 4
+            memory: 4Gi
+        volumeMounts:
+        - mountPath: "/data"
+          name: data
+      initContainers:
+      - image: busybox
+        name: init
+        command: 
+        - chown 
+        - '200.200'
+        - /data
+        volumeMounts:
+        - mountPath: "/data"
+          name: data
+      volumes:
+      - name: data
+        persistentVolumeClaim:
+          claimName: raoa-data
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: raoa-data
+  namespace: raoa-dev
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 20Gi
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: nexus
+  namespace: raoa-dev
+  annotations:
+    kubernetes.io/tls-acme: 'true'
+    ingress.kubernetes.io/proxy-body-size: 512m
+spec:
+  tls:
+  - secretName: raoa-dev-tls
+    hosts:
+    - nexus.berg-turbenthal.ch
+  rules:
+  - host: raoa-dev.berg-turbenthal.ch
+    http:
+      paths:
+      - backend:
+          serviceName: raoa
+          servicePort: 8080

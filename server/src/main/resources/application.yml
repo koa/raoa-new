@@ -18,4 +18,4 @@ spring:
             client-secret: ${GOOGLE-CLIENT-SECRET}
             client-name: Google Account
             provider: google
-            redirect-uri: http://localhost:8080/login/oauth2/code/google
+            redirect-uri: ${APPLICATION-ROOT-URL}/login/oauth2/code/google
