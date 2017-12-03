@@ -32,7 +32,7 @@ node {
    stage('Deploy') {
         sh "wget https://nexus.berg-turbenthal.ch/repository/kubernetes-release/release/v1.8.4/bin/linux/amd64/kubectl"
         sh "chmod +x ./kubectl"
-   		sh "./kubectl -f deploy/target/classes/k8s/"
+   		sh "./kubectl apply -f deploy/target/classes/k8s/"
    }
    stage('Results') {
       archive 'target/*.jar'
