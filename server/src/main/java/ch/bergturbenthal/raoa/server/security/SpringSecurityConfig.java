@@ -59,42 +59,46 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 
         final GrantedAuthoritiesMapper userAuthoritiesMapper = authorities -> {
             final ArrayList<GrantedAuthority> ret = new ArrayList<GrantedAuthority>(authorities);
-            for (final GrantedAuthority grantedAuthority : authorities) {
-                if (grantedAuthority instanceof OAuth2UserAuthority) {
-                    final OAuth2UserAuthority new_name = (OAuth2UserAuthority) grantedAuthority;
-                    final Map<String, Object> attributes = new_name.getAttributes();
-                    final String email = (String) attributes.get("email");
-                    runtimeConfigurationService.editGlobalConfiguration(c -> {
-                        final HashMap<String, UserData> updatedUsers = new HashMap<>(c.getKnownUsers());
-                        UserDataBuilder userDataBuilder;
-                        final UserData existingUser = updatedUsers.get(email);
-                        if (existingUser == null) {
-                            userDataBuilder = UserData.builder().createdAt(Instant.now()).globalAccessLevel(AccessLevel.NONE)
-                                    .admin(properties.getAdminEmail().equals(email));
-                        } else {
-                            userDataBuilder = existingUser.toBuilder();
-                        }
-                        final UserData userData = userDataBuilder.lastAccess(Instant.now()).build();
-                        if (userData.isAdmin()) {
-                            ret.add(new SimpleGrantedAuthority(Roles.ADMIN));
-                        }
-                        switch (userData.getGlobalAccessLevel()) {
-                            case READ:
-                                ret.add(new SimpleGrantedAuthority(Roles.SHOW));
-                                break;
-                            case NONE:
-                                break;
-                            default:
-                                break;
-                        }
-                        updatedUsers.put(email, userData);
-                        return c.toBuilder().knownUsers(Collections.unmodifiableMap(updatedUsers)).build();
-                    });
+            try {
+                for (final GrantedAuthority grantedAuthority : authorities) {
+                    if (grantedAuthority instanceof OAuth2UserAuthority) {
+                        final OAuth2UserAuthority new_name = (OAuth2UserAuthority) grantedAuthority;
+                        final Map<String, Object> attributes = new_name.getAttributes();
+                        final String email = (String) attributes.get("email");
+                        runtimeConfigurationService.editGlobalConfiguration(c -> {
+                            final HashMap<String, UserData> updatedUsers = new HashMap<>(c.getKnownUsers());
+                            UserDataBuilder userDataBuilder;
+                            final UserData existingUser = updatedUsers.get(email);
+                            if (existingUser == null) {
+                                userDataBuilder = UserData.builder().createdAt(Instant.now()).globalAccessLevel(AccessLevel.NONE)
+                                        .admin(properties.getAdminEmail().equals(email));
+                            } else {
+                                userDataBuilder = existingUser.toBuilder();
+                            }
+                            final UserData userData = userDataBuilder.lastAccess(Instant.now()).build();
+                            if (userData.isAdmin()) {
+                                ret.add(new SimpleGrantedAuthority(Roles.ADMIN));
+                            }
+                            switch (userData.getGlobalAccessLevel()) {
+                                case READ:
+                                    ret.add(new SimpleGrantedAuthority(Roles.SHOW));
+                                    break;
+                                case NONE:
+                                    break;
+                                default:
+                                    break;
+                            }
+                            updatedUsers.put(email, userData);
+                            return c.toBuilder().knownUsers(Collections.unmodifiableMap(updatedUsers)).build();
+                        });
 
-                    for (final Entry<String, Object> attrEntry : attributes.entrySet()) {
-                        log.info(attrEntry.getKey() + ": " + attrEntry.getValue());
+                        for (final Entry<String, Object> attrEntry : attributes.entrySet()) {
+                            log.info(attrEntry.getKey() + ": " + attrEntry.getValue());
+                        }
                     }
                 }
+            } catch (final Exception ex) {
+                log.error("Error processing attributes", ex);
             }
             return ret;
         };
