@@ -85,6 +85,7 @@
 							<build>
 								<tags>
 									<tag>latest</tag>
+									<tag>${git.commit.id.describe}</tag>
 									<tag>${project.version}</tag>
 								</tags>
 								<from>openjdk:8</from>
