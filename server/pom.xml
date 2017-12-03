@@ -119,6 +119,7 @@
 									<descriptorRef>artifact</descriptorRef>
 									<name></name>
 								</assembly>
+								<user>nobody</user>
 							</build>
 						</image>
 					</images>
