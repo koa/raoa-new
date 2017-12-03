@@ -77,7 +77,7 @@ spec:
         name: chown
         command: 
         - chown 
-        - '200.200'
+        - 'nobody.nogroup'
         - /data/config
         - /data/photos
         volumeMounts:
