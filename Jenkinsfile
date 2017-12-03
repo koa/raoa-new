@@ -28,7 +28,9 @@ node {
        }
    }
    stage('Docker build'){
-       docker.build("my-image:latest")
+       docker.withTool('docker-latest') {
+           docker.build("my-image:latest")
+       }
    }
    stage('Results') {
       archive 'target/*.jar'
