@@ -36,6 +36,8 @@ spec:
         ports:
         - containerPort: 8080
         env:
+        - name: RAOA_ADMIN_EMAIL
+          value: andreas.koenig@berg-turbenthal.ch
         - name: GOOGLE-CLIENT-ID
           valueFrom:
             secretKeyRef:
@@ -49,7 +51,7 @@ spec:
         - name: APPLICATION-ROOT-URL
           value: https://raoa-dev.berg-turbenthal.ch/
         - name: DEBUG
-          value: true
+          value: "true"
         resources:
           requests:
             cpu: 2
@@ -62,11 +64,22 @@ spec:
           name: data
       initContainers:
       - image: busybox
-        name: init
+        name: mkdirs
+        command: 
+        - mkdir
+        - -p 
+        - /data/config
+        - /data/photos 
+        volumeMounts:
+        - mountPath: "/data"
+          name: data
+      - image: busybox
+        name: chown
         command: 
         - chown 
         - '200.200'
-        - /data
+        - /data/config
+        - /data/photos
         volumeMounts:
         - mountPath: "/data"
           name: data
