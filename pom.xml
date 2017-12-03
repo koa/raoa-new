@@ -11,7 +11,7 @@
 		<version>2.0.0.M6</version>
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
-	
+
 	<modules>
 		<module>server</module>
 	</modules>
@@ -55,6 +55,16 @@
 			<url>http://maven.vaadin.com/vaadin-addons</url>
 		</repository>
 	</repositories>
+	<pluginRepositories>
+		<pluginRepository>
+			<id>spring-milestones</id>
+			<name>Spring Milestones</name>
+			<url>https://repo.spring.io/libs-milestone</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</pluginRepository>
+	</pluginRepositories>
 	<distributionManagement>
 		<repository>
 			<id>berg-releases</id>
