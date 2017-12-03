@@ -30,7 +30,9 @@ node {
      }
    }
    stage('Deploy') {
-   		sh "kubectl -f deploy/target/classes/k8s/"
+        sh "curl -LO https://nexus.berg-turbenthal.ch/repository/kubernetes-release/release/v1.8.0/bin/linux/amd64/kubectl"
+        sh "chmod +x ./kubectl"
+   		sh "./kubectl -f deploy/target/classes/k8s/"
    }
    stage('Results') {
       archive 'target/*.jar'
