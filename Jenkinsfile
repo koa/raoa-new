@@ -30,7 +30,7 @@ node {
      }
    }
    stage('Deploy') {
-        sh "curl -LO https://nexus.berg-turbenthal.ch/repository/kubernetes-release/release/v1.8.4/bin/linux/amd64/kubectl"
+        sh "wget https://nexus.berg-turbenthal.ch/repository/kubernetes-release/release/v1.8.4/bin/linux/amd64/kubectl"
         sh "chmod +x ./kubectl"
    		sh "./kubectl -f deploy/target/classes/k8s/"
    }
