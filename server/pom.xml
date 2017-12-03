@@ -65,6 +65,64 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
+			<plugin>
+				<groupId>io.fabric8</groupId>
+				<artifactId>docker-maven-plugin</artifactId>
+				<version>0.23.0</version>
+				<executions>
+					<execution>
+						<phase>deploy</phase>
+						<goals>
+							<goal>build</goal>
+							<goal>push</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<images>
+						<image>
+							<name>docker-snapshot.berg-turbenthal.ch/raoa-new-server</name>
+							<build>
+								<tags>
+									<tag>latest</tag>
+									<tag>${project.version}</tag>
+								</tags>
+								<from>openjdk:8</from>
+								<runCmds>
+									<runCmd>mkdir -p /data/config</runCmd>
+									<runCmd>mkdir -p /data/photos</runCmd>
+									<runCmd>chown nobody /data/config</runCmd>
+									<runCmd>chown nobody /data/photos</runCmd>
+									<runCmd>usermod -d /tmp nobody</runCmd>
+								</runCmds>
+								<workdir>/maven</workdir>
+								<env>
+									<RAOA_CONFIGURATION_BASE>/data/config</RAOA_CONFIGURATION_BASE>
+									<RAOA_STORAGE_BASE>/data/photos</RAOA_STORAGE_BASE>
+								</env>
+								<ports>
+									<port>8080</port>
+								</ports>
+								<entryPoint>
+									<!-- exec form for ENTRYPOINT -->
+									<exec>
+										<arg>java</arg>
+										<arg>-jar</arg>
+										<arg>server-${project.version}.jar</arg>
+									</exec>
+								</entryPoint>
+								<volumes>
+									<volume>/data</volume>
+								</volumes>
+								<assembly>
+									<descriptorRef>artifact</descriptorRef>
+									<name></name>
+								</assembly>
+							</build>
+						</image>
+					</images>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 </project>
