@@ -14,6 +14,7 @@
 
 	<modules>
 		<module>server</module>
+		<module>deploy</module>
 	</modules>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -82,7 +83,7 @@
 			<plugin>
 				<groupId>pl.project13.maven</groupId>
 				<artifactId>git-commit-id-plugin</artifactId>
-				</plugin>
+			</plugin>
 		</plugins>
 	</build>
 </project>

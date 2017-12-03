@@ -29,6 +29,9 @@ node {
        }
      }
    }
+   stage('Deploy') {
+   		sh "kubectl -f deploy/target/classes/k8s/"
+   }
    stage('Results') {
       archive 'target/*.jar'
    }

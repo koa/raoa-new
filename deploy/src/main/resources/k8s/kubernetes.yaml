@@ -30,7 +30,7 @@ spec:
         run: raoa
     spec:
       containers:
-      - image: docker-snapshot.berg-turbenthal.ch/raoa-new-server:latest
+      - image: docker-snapshot.berg-turbenthal.ch/raoa-new-server:@git.commit.id.describe-short@
         imagePullPolicy: Always
         name: test
         ports:
@@ -48,6 +48,8 @@ spec:
               key: clientSecret
         - name: APPLICATION-ROOT-URL
           value: https://raoa-dev.berg-turbenthal.ch/
+        - name: DEBUG
+          value: true
         resources:
           requests:
             cpu: 2
@@ -88,7 +90,7 @@ spec:
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
-  name: nexus
+  name: raoa
   namespace: raoa-dev
   annotations:
     kubernetes.io/tls-acme: 'true'
@@ -97,7 +99,7 @@ spec:
   tls:
   - secretName: raoa-dev-tls
     hosts:
-    - nexus.berg-turbenthal.ch
+    - raoa-dev.berg-turbenthal.ch
   rules:
   - host: raoa-dev.berg-turbenthal.ch
     http:
