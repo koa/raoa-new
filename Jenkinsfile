@@ -14,9 +14,11 @@ node {
        extensions: [[$class: 'CleanCheckout'],[$class: 'LocalBranch', localBranch: "master"]]])
    def mvnHome
    def dockerHome
+   def kubectlHome
    stage('Preparation') {
       mvnHome = tool 'Maven 3.5.2'
       dockerHome = tool 'docker-latest'
+      kubectlHome = tool 'kubectl'
    }
    configFileProvider([configFile(fileId: '83ccdf5b-6b19-4cd7-93b6-fdffb55cefa9', variable: 'MAVEN_SETTINGS')])  {
      docker.withRegistry('https://docker-snapshot.berg-turbenthal.ch', '2190cf3e-ae3c-48a6-84ba-454a7e9a7b7c') {
@@ -30,9 +32,7 @@ node {
      }
    }
    stage('Deploy') {
-        sh "curl -LO https://nexus.berg-turbenthal.ch/repository/kubernetes-release/release/v1.8.0/bin/linux/amd64/kubectl"
-        sh "chmod +x ./kubectl"
-   		sh "./kubectl -f deploy/target/classes/k8s/"
+   		sh "'${kubectlHome}'/kubectl -f deploy/target/classes/k8s/"
    }
    stage('Results') {
       archive 'target/*.jar'
