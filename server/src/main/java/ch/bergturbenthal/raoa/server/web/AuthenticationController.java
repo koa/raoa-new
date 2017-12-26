@@ -11,7 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Controller
-public class LoginController {
+public class AuthenticationController {
     @RequestMapping("/login")
     public String login(@RequestParam(name = "error", required = false) final String error,
             @SessionAttribute(name = WebAttributes.AUTHENTICATION_EXCEPTION, required = false) final AuthenticationException exception) {
@@ -23,4 +23,5 @@ public class LoginController {
         }
         return "login";
     }
+
 }

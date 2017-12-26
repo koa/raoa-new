@@ -1,6 +1,7 @@
 package ch.bergturbenthal.raoa.server.model.configuration;
 
 import java.time.Instant;
+import java.util.Optional;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
@@ -13,11 +14,13 @@ import lombok.Value;
 public class UserData {
     @NonNull
     @JsonFormat(shape = JsonFormat.Shape.STRING)
-    private Instant     lastAccess;
+    private Instant          lastAccess;
     @NonNull
     @JsonFormat(shape = JsonFormat.Shape.STRING)
-    private Instant     createdAt;
-    private boolean     admin;
+    private Instant          createdAt;
+    private boolean          admin;
     @NonNull
-    private AccessLevel globalAccessLevel;
+    private Optional<String> localPassword;
+    @NonNull
+    private AccessLevel      globalAccessLevel;
 }

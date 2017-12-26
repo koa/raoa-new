@@ -1,5 +1,7 @@
+server:
+  use-forward-headers: true
 spring:
-  security:
+  security:    
     oauth2:
       client:
         provider:
