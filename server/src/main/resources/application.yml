@@ -16,8 +16,8 @@ spring:
 #            scope: user
 #            redirect-uri: http://localhost:8080/login/oauth2/code/github
           google:
-            client-id: ${GOOGLE-CLIENT-ID}
-            client-secret: ${GOOGLE-CLIENT-SECRET}
+            client-id: ${GOOGLE-CLIENT-ID:dummy}
+            client-secret: ${GOOGLE-CLIENT-SECRET:dummy}
             client-name: Google Account
             provider: google
-            redirect-uri: ${APPLICATION-ROOT-URL}/login/oauth2/code/google
+            redirect-uri: ${APPLICATION-ROOT-URL:dummy}/login/oauth2/code/google

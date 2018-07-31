@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Import;
 import ch.bergturbenthal.raoa.server.security.SpringSecurityConfig;
 
 @SpringBootApplication
-@Import(SpringSecurityConfig.class)
+@Import({ SpringSecurityConfig.class })
 public class ServerApplication {
 
     public static void main(final String[] args) {

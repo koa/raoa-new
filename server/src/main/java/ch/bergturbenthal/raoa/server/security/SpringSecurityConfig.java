@@ -187,7 +187,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
             } else {
                 userDataBuilder = existingUser.toBuilder();
             }
-            final UserData userData = userDataBuilder.lastAccess(Instant.now()).build();
+            final UserData userData = userDataBuilder.lastAccess(Instant.now()).localPassword(Optional.empty()).build();
             authorities.addAll(findRoles(userData));
             updatedUsers.put(email, userData);
             return c.toBuilder().knownUsers(Collections.unmodifiableMap(updatedUsers)).build();
