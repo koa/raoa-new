@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+option java_package = "ch.bergturbenthal.raoa.service.thumbnailer";
+package raoa;
+
+import "google/protobuf/empty.proto";
+service ThumbnailerService {
+	rpc getCapabilities (google.protobuf.Empty) returns (ThumbnailerCapabilities);
+	rpc claimThumbnailGeneration (GenerationRequest) returns (GenerationResponse);
+}
+
+message ThumbnailerCapabilities {
+	repeated string regex = 1;
+}
+
+message GenerationRequest {
+	string filename = 1;
+	int64 length = 2;
+}
+
+message GenerationResponse {
+	oneof response {
+		ServiceOverloadedResponse overloadedResponse = 2;
+		int64 fileTransferHandle = 1;
+	}
+}
+
+message ServiceOverloadedResponse {
+}

@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+option java_package = "ch.bergturbenthal.raoa.service.file.upload.test";
+package raoa;
+
+service RequestFileUploadService {
+	rpc requestFileUpload (FileUploadRequest) returns (FileUploadResponse);
+}
+
+message FileUploadRequest{
+	string filename = 1;
+	int64 filesize = 2;
+}
+message FileUploadResponse{
+	int64 uploadHandle = 1;
+}
