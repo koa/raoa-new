@@ -6,7 +6,7 @@
     <artifactId>raoa</artifactId>
     <version>0.0.1-SNAPSHOT</version>
   </parent>
-  <artifactId>file-uploader-client</artifactId>
+  <artifactId>file-download-server</artifactId>
   <dependencies>
     <dependency>
       <groupId>ch.bergturbenthal.raoa.new</groupId>

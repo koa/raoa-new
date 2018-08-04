@@ -5,14 +5,21 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.security.SecureRandom;
+import java.time.Duration;
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Random;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.atomic.LongAdder;
+import java.util.function.Consumer;
 
 import ch.bergturbenthal.raoa.fileuploader.server.domain.service.FileuploadService;
 import lombok.Data;
@@ -30,11 +37,18 @@ public class DefaultUploadService implements FileuploadService {
         private boolean         uploading;
         private LongAdder       uploadCount = new LongAdder();
         private Queue<Runnable> listeners   = new ConcurrentLinkedQueue<>();
+        private Runnable        refreshTimerRunnable;
     }
 
-    private final Map<Long, UploadJob> currentPendingJobs = Collections.synchronizedMap(new HashMap<>());
+    private final Map<Long, UploadJob>     currentPendingJobs = Collections.synchronizedMap(new HashMap<>());
 
-    private final Random               random             = new SecureRandom();
+    private final Random                   random             = new SecureRandom();
+
+    private final ScheduledExecutorService executorService;
+
+    public DefaultUploadService(final ScheduledExecutorService executorService) {
+        this.executorService = executorService;
+    }
 
     @Override
     public UploadingFileSlot anounceUpload(final long expectedSize, final String suffix) {
@@ -47,6 +61,8 @@ public class DefaultUploadService implements FileuploadService {
             uploadJob.setTargetFile(tempFile);
             uploadJob.setOutputStream(new FileOutputStream(tempFile));
             uploadJob.setUploading(true);
+            uploadJob.setUploadTimeout(Instant.now().plus(20, ChronoUnit.SECONDS));
+            uploadJob.setProcessTimeout(Instant.now().plus(30, ChronoUnit.SECONDS));
 
             while (true) {
                 final long uploadHandle = random.nextLong();
@@ -54,14 +70,33 @@ public class DefaultUploadService implements FileuploadService {
                 if (currentPendingJobs.putIfAbsent(uploadHandle, uploadJob) != null) {
                     continue;
                 }
+                final Runnable cleanupRunnable = () -> {
+                    currentPendingJobs.remove(uploadHandle, uploadJob);
+                    uploadJob.getTargetFile().delete();
+                };
+                final AtomicReference<ScheduledFuture<?>> pendingScheduledFuture = new AtomicReference<ScheduledFuture<?>>(null);
+                final Consumer<ScheduledFuture<?>> scheduledFutureConsumer = scheduledFuture -> {
+                    final ScheduledFuture<?> oldFuture = pendingScheduledFuture.getAndSet(scheduledFuture);
+                    if (oldFuture != null && !oldFuture.isDone()) {
+                        oldFuture.cancel(false);
+                    }
+                };
+                final Runnable refreshTimeout = () -> {
+                    final Instant timeout;
+                    if (uploadJob.isUploading()) {
+                        timeout = uploadJob.getUploadTimeout();
+                    } else {
+                        timeout = uploadJob.getProcessTimeout();
+                    }
+                    final long remainingTime = Duration.between(Instant.now(), timeout).toMillis();
+                    if (remainingTime <= 0) {
+                        cleanupRunnable.run();
+                    }
+                    scheduledFutureConsumer.accept(executorService.schedule(cleanupRunnable, remainingTime, TimeUnit.MILLISECONDS));
+                };
+                uploadJob.setRefreshTimerRunnable(refreshTimeout);
 
                 return new UploadingFileSlot() {
-
-                    @Override
-                    public void close() {
-                        currentPendingJobs.remove(uploadHandle, uploadJob);
-                        uploadJob.getTargetFile().delete();
-                    }
 
                     @Override
                     public Mono<UploadedFile> getData() {
@@ -70,10 +105,9 @@ public class DefaultUploadService implements FileuploadService {
                                 final UploadedFile uploadedFile = new UploadedFile() {
 
                                     @Override
-                                    public void close() throws Exception {
-                                        currentPendingJobs.remove(uploadHandle, uploadJob);
-                                        uploadJob.getTargetFile().delete();
-
+                                    public void close() {
+                                        cleanupRunnable.run();
+                                        scheduledFutureConsumer.accept(null);
                                     }
 
                                     @Override
@@ -97,11 +131,17 @@ public class DefaultUploadService implements FileuploadService {
                     @Override
                     public void setProcessTimeout(final Instant timeout) {
                         uploadJob.setProcessTimeout(timeout);
+                        if (!uploadJob.isUploading()) {
+                            refreshTimeout.run();
+                        }
                     }
 
                     @Override
                     public void setUploadTimeout(final Instant timeout) {
                         uploadJob.setUploadTimeout(timeout);
+                        if (uploadJob.isUploading()) {
+                            refreshTimeout.run();
+                        }
                     }
                 };
             }
@@ -137,6 +177,7 @@ public class DefaultUploadService implements FileuploadService {
         if (uploadCount.longValue() >= job.getExpectedSize()) {
             outputStream.close();
             job.setUploading(false);
+            job.getRefreshTimerRunnable().run();
             drain(job);
         }
         return true;

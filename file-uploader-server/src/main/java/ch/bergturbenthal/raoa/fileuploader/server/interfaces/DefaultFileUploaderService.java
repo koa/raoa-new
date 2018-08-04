@@ -6,10 +6,10 @@ import org.lognet.springboot.grpc.GRpcService;
 
 import com.google.protobuf.ByteString;
 
-import ch.bergturbenthal.raoa.service.file.upload.FileUpload.FragmentRequest;
-import ch.bergturbenthal.raoa.service.file.upload.FileUpload.FragmentResponse;
 import ch.bergturbenthal.raoa.fileuploader.server.domain.service.FileuploadService;
 import ch.bergturbenthal.raoa.service.file.upload.FileUploadServiceGrpc;
+import ch.bergturbenthal.raoa.service.file.upload.FragmentRequest;
+import ch.bergturbenthal.raoa.service.file.upload.FragmentResponse;
 import io.grpc.stub.StreamObserver;
 import lombok.extern.slf4j.Slf4j;
 

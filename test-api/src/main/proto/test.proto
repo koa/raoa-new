@@ -6,6 +6,9 @@ package raoa;
 service RequestFileUploadService {
 	rpc requestFileUpload (FileUploadRequest) returns (FileUploadResponse);
 }
+service RequestFileDownloadService {
+	rpc requestFileDownload (FileDownloadRequest) returns (FileDownloadResponse);
+}
 
 message FileUploadRequest{
 	string filename = 1;
@@ -13,4 +16,10 @@ message FileUploadRequest{
 }
 message FileUploadResponse{
 	int64 uploadHandle = 1;
+}
+
+message FileDownloadRequest{
+}
+message FileDownloadResponse{
+	int64 downloadHandle = 1;
 }

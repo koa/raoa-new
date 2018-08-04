@@ -8,10 +8,15 @@ import reactor.core.publisher.Mono;
 
 public interface FileuploadService {
     public static interface UploadedFile extends AutoCloseable {
+        @Override
+        void close();
+
         File getFile();
+
     }
 
-    public static interface UploadingFileSlot extends AutoCloseable {
+    public static interface UploadingFileSlot {
+
         Mono<UploadedFile> getData();
 
         long getHandle();

@@ -10,11 +10,11 @@ import com.google.common.util.concurrent.SettableFuture;
 import com.google.protobuf.ByteString;
 
 import ch.bergturbenthal.raoa.fileuploader.client.UploaderClient;
-import ch.bergturbenthal.raoa.service.file.upload.FileUpload.FragmentRequest;
-import ch.bergturbenthal.raoa.service.file.upload.FileUpload.FragmentResponse;
-import ch.bergturbenthal.raoa.service.file.upload.FileUpload.FragmentResponse.ResponseState;
 import ch.bergturbenthal.raoa.service.file.upload.FileUploadServiceGrpc;
 import ch.bergturbenthal.raoa.service.file.upload.FileUploadServiceGrpc.FileUploadServiceFutureStub;
+import ch.bergturbenthal.raoa.service.file.upload.FragmentRequest;
+import ch.bergturbenthal.raoa.service.file.upload.FragmentResponse;
+import ch.bergturbenthal.raoa.service.file.upload.FragmentResponse.ResponseState;
 import io.grpc.Channel;
 import lombok.extern.slf4j.Slf4j;
 
@@ -38,7 +38,16 @@ public class DefaultUploadClient implements UploaderClient {
     private void sendFragment(final InputStream data, final FileUploadServiceFutureStub stub, final SettableFuture<Void> response,
             final long handle) {
         try {
-            final ByteString value = ByteString.readFrom(data, 1024 * 1024);
+            final byte[] buffer = new byte[1024 * 1024];
+            int ptr = 0;
+            while (true) {
+                final int read = data.read(buffer, ptr, buffer.length - ptr);
+                if (ptr < 0) {
+                    break;
+                }
+                ptr = +read;
+            }
+            final ByteString value = ByteString.copyFrom(buffer, 0, ptr);
             if (value.isEmpty()) {
                 // no more data
                 response.set(null);

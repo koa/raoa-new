@@ -1,6 +1,7 @@
 syntax = "proto3";
 
 option java_package = "ch.bergturbenthal.raoa.service.thumbnailer";
+option java_multiple_files = true;
 package raoa;
 
 import "google/protobuf/empty.proto";

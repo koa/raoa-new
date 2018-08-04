@@ -1,5 +1,7 @@
 package ch.bergturbenthal.raoa.fileuploader.server;
 
+import java.util.concurrent.ScheduledExecutorService;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -15,8 +17,8 @@ public class FileUploaderServiceConfiguration {
     }
 
     @Bean
-    public FileuploadService fileuploadService() {
-        return new DefaultUploadService();
+    public FileuploadService fileuploadService(final ScheduledExecutorService executorService) {
+        return new DefaultUploadService(executorService);
     }
 
 }
