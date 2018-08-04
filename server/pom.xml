@@ -78,8 +78,26 @@
     <dependency>
       <groupId>org.lognet</groupId>
       <artifactId>grpc-spring-boot-starter</artifactId>
-      <version>2.4.0</version>
     </dependency>
+    <dependency>
+      <groupId>org.springframework.cloud</groupId>
+      <artifactId>spring-cloud-starter-kubernetes</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.cloud</groupId>
+      <artifactId>spring-cloud-kubernetes-config</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>ch.bergturbenthal.raoa.new</groupId>
+      <artifactId>file-uploader-client</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>ch.bergturbenthal.raoa.new</groupId>
+      <artifactId>file-download-client</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+    </dependency>
+
   </dependencies>
   <build>
     <plugins>

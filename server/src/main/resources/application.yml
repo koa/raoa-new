@@ -1,6 +1,19 @@
 server:
   use-forward-headers: true
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+
+ 
 spring:
+  cloud:
+    discovery:
+      client:
+        simple:
+          instances:
+            thumbnailer:
+            - uri: http://localhost:6566/
   security:    
     oauth2:
       client:

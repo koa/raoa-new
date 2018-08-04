@@ -61,6 +61,7 @@ public class DefaultUploadService implements FileuploadService {
             uploadJob.setTargetFile(tempFile);
             uploadJob.setOutputStream(new FileOutputStream(tempFile));
             uploadJob.setUploading(true);
+            uploadJob.setExpectedSize(expectedSize);
             uploadJob.setUploadTimeout(Instant.now().plus(20, ChronoUnit.SECONDS));
             uploadJob.setProcessTimeout(Instant.now().plus(30, ChronoUnit.SECONDS));
 

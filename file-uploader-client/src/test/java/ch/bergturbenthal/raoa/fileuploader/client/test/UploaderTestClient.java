@@ -24,6 +24,7 @@ import ch.bergturbenthal.raoa.service.file.upload.test.Test.FileUploadRequest;
 import ch.bergturbenthal.raoa.service.file.upload.test.Test.FileUploadResponse;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
+import reactor.core.publisher.Mono;
 
 @EnableFileUploadClient
 @SpringBootApplication
@@ -38,8 +39,8 @@ public class UploaderTestClient {
         final FileUploadResponse uploadResponse = requestUploadService
                 .requestFileUpload(FileUploadRequest.newBuilder().setFilename(uploadFile.getName()).setFilesize(uploadFile.length()).build());
         final long uploadHandle = uploadResponse.getUploadHandle();
-        final ListenableFuture<Void> future = uploaderClient.sendFile(new FileInputStream(uploadFile), uploadHandle, channel);
-        future.get();
+        final Mono<Void> future = uploaderClient.sendFile(new FileInputStream(uploadFile), uploadHandle, channel);
+        future.block();
     }
 
     @Bean

@@ -14,6 +14,7 @@ import lombok.Data;
 public class RaoaProperties {
     @NotNull
     private String adminEmail;
-    private File   configurationBase = new File(FileUtils.getTempDirectory(), "raoa-settings");
-    private File   storageBase       = new File(FileUtils.getTempDirectory(), "raoa-storage");
+    private File   configurationBase  = new File(FileUtils.getTempDirectory(), "raoa-settings");
+    private File   storageBase        = new File(FileUtils.getTempDirectory(), "raoa-storage");
+    private String thumbnailerService = "thumbnailer";
 }
