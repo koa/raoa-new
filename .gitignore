@@ -1,2 +1,6 @@
-/.project
-/target
+.project
+target
+.idea
+*.iml
+.settings
+.factorypath
