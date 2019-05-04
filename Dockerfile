@@ -1,14 +1,13 @@
-FROM openjdk:8-jdk-slim
+FROM maven:3.6.0-jdk-11-slim as build-env
+ADD . /build/tfbridge
+WORKDIR /build/tfbridge
+RUN mvn clean install
+RUN mkdir -p /app
+RUN mv server/target/app*.jar /app/app.jar
+
+FROM gcr.io/distroless/java:11
 ENV PORT 8080
-ENV CLASSPATH /opt/lib
 EXPOSE 8080
-
-# copy pom.xml and wildcards to avoid this command failing if there's no target/lib directory
-COPY pom.xml target/lib* /opt/lib/
-
-# NOTE we assume there's only 1 jar in the target dir
-# but at least this means we don't have to guess the name
-# we could do with a better way to know the name - or to always create an app.jar or something
-COPY target/*.jar /opt/app.jar
-WORKDIR /opt
-CMD ["java", "-jar", "app.jar"]
+COPY --from=build-env /app /app
+WORKDIR /app
+CMD ["app.jar"]
