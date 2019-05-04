@@ -1,139 +1,141 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymelef.org">
 <head>
-<meta charset="UTF-8" />
-<title>OAuth2 Test Sample</title>
-<link href="https://fonts.googleapis.com/css?family=Roboto"
-	rel="stylesheet" type="text/css">
-<style type="text/css">
-body {
-	background: #f0f0f0;
-	font-family: "Roboto", sans-serif;
-	-webkit-font-smoothing: antialiased;
-	-moz-osx-font-smoothing: grayscale;
-}
+    <meta charset="UTF-8"/>
+    <title>OAuth2 Test Sample</title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto"
+          rel="stylesheet" type="text/css">
+    <style type="text/css">
+        body {
+            background: #f0f0f0;
+            font-family: "Roboto", sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
 
-#gSignInWrapper {
-	position: relative;
-	z-index: 1;
-	background: #FFFFFF;
-	max-width: 240px;
-	margin: 0 auto 100px;
-	padding: 45px;
-	text-align: center;
-	box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0
-		rgba(0, 0, 0, 0.24);
-}
+        #gSignInWrapper {
+            position: relative;
+            z-index: 1;
+            background: #FFFFFF;
+            max-width: 240px;
+            margin: 0 auto 100px;
+            padding: 45px;
+            text-align: center;
+            box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
+        }
 
-#gSignInWrapper input {
-	font-family: "Roboto", sans-serif;
-	outline: 0;
-	background: #f2f2f2;
-	width: 100%;
-	border: 0;
-	margin: 0 0 15px;
-	padding: 15px;
-	box-sizing: border-box;
-	font-size: 14px;
-}
+        #gSignInWrapper input {
+            font-family: "Roboto", sans-serif;
+            outline: 0;
+            background: #f2f2f2;
+            width: 100%;
+            border: 0;
+            margin: 0 0 15px;
+            padding: 15px;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
 
-#gSignInWrapper button {
-	font-family: "Roboto", sans-serif;
-	text-transform: uppercase;
-	outline: 0;
-	background: #4CAF50;
-	width: 100%;
-	border: 0;
-	padding: 15px;
-	color: #FFFFFF;
-	font-size: 14px;
-	-webkit-transition: all 0.3 ease;
-	transition: all 0.3 ease;
-	cursor: pointer;
-	box-shadow: 1px 1px 1px grey;
-}
+        #gSignInWrapper button {
+            font-family: "Roboto", sans-serif;
+            text-transform: uppercase;
+            outline: 0;
+            background: #4CAF50;
+            width: 100%;
+            border: 0;
+            padding: 15px;
+            color: #FFFFFF;
+            font-size: 14px;
+            -webkit-transition: all 0.3 ease;
+            transition: all 0.3 ease;
+            cursor: pointer;
+            box-shadow: 1px 1px 1px grey;
+        }
 
-#gSignInWrapper .flash {
-	font-family: "Roboto", sans-serif;
-	outline: 0;
-	width: 100%;
-	border: 0;
-	margin: 0 0 15px;
-	box-sizing: border-box;
-	font-size: 14px;
-}
-#customBtn {
-	display: inline-block;
-	background: white;
-	color: #444;
-	background-color: #4285f4;
-	width: 100%;
-	border: 0;
-	text-align: left; border : thin solid #888;
-	box-shadow: 1px 1px 1px grey;
-	white-space: nowrap;
-	border: 5px;
-	margin-top: 15px;
-	border: thin solid #888
-}
+        #gSignInWrapper .flash {
+            font-family: "Roboto", sans-serif;
+            outline: 0;
+            width: 100%;
+            border: 0;
+            margin: 0 0 15px;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
 
-#customBtn:hover {
-	cursor: pointer;
-}
+        #customBtn {
+            display: inline-block;
+            background: white;
+            color: #444;
+            background-color: #4285f4;
+            width: 100%;
+            border: 0;
+            text-align: left;
+            border: thin solid #888;
+            box-shadow: 1px 1px 1px grey;
+            white-space: nowrap;
+            border: 5px;
+            margin-top: 15px;
+            border: thin solid #888
+        }
 
-span.label { //
-	font-family: serif;
-	font-weight: normal;
-}
+        #customBtn:hover {
+            cursor: pointer;
+        }
 
-span.icon {
-	
-}
+        span.label {
+        / / font-family: serif;
+            font-weight: normal;
+        }
 
-span.buttonText {
-	background: url('login/btn_google_light_normal_ios.svg') transparent 0px
-		50% no-repeat;
-	display: inline-block;
-	vertical-align: middle;
-	width: 100%;
-	height: 100%;
-	display: inline-block;
-	color: #FFFFFF;
-	vertical-align: middle;
-	text-align: center;
-	font-size: 16px;
-	font-weight: 500;
-	font-family: 'Roboto', sans-serif;
-	padding: 14px;
-}
-</style>
+        span.icon {
+
+        }
+
+        span.buttonText {
+            background: url('login/btn_google_light_normal_ios.svg') transparent 0px 50% no-repeat;
+            display: inline-block;
+            vertical-align: middle;
+            width: 100%;
+            height: 100%;
+            display: inline-block;
+            color: #FFFFFF;
+            vertical-align: middle;
+            text-align: center;
+            font-size: 16px;
+            font-weight: 500;
+            font-family: 'Roboto', sans-serif;
+            padding: 14px;
+        }
+    </style>
 </head>
 <body>
-	<div style="position: fixed; top: 50%; left: 50%;">
-		<div id="gSignInWrapper" style="margin-top: -50%; margin-left: -50%;">
-			<div th:if="${param.error}" class="flash">Invalid username and
-				password.</div>
-			<div th:if="${param.logout}" class="flash">You have been logged
-				out.</div>
-			<form th:action="@{/login}" class="login-form" method="post">
-				<div>
-					<input type="text" name="username" placeholder="email"
-						required="required" />
-				</div>
-				<div>
-					<input type="password" name="password" placeholder="password"
-						required="required" />
-				</div>
-				<div>
-					<button>login</button>
-				</div>
-				<div id="customBtn" class="customGPlusSignIn"
-					onclick="location.href='/oauth2/authorization/google'">
-					<!-- <span class="icon"></span> -->
-					<span class="buttonText">Sign in with Google</span>
-				</div>
-			</form>
-		</div>
-	</div>
+<div style="position: fixed; top: 50%; left: 50%;">
+    <div id="gSignInWrapper" style="margin-top: -50%; margin-left: -50%;">
+        <div class="flash" th:if="${param.error}">Invalid username and
+            password.
+        </div>
+        <div class="flash" th:if="${param.logout}">You have been logged
+            out.
+        </div>
+        <form class="login-form" method="post" th:action="@{/login}">
+            <div>
+                <input name="username" placeholder="email" required="required"
+                       type="text"/>
+            </div>
+            <div>
+                <input name="password" placeholder="password" required="required"
+                       type="password"/>
+            </div>
+            <div>
+                <button>login</button>
+            </div>
+            <div class="customGPlusSignIn" id="customBtn"
+                 onclick="location.href='/oauth2/authorization/google'">
+                <!-- <span class="icon"></span> -->
+                <span class="buttonText">Sign in with Google</span>
+            </div>
+        </form>
+    </div>
+</div>
 </body>
 </html>

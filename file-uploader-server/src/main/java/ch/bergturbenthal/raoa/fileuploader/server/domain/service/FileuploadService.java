@@ -3,30 +3,28 @@ package ch.bergturbenthal.raoa.fileuploader.server.domain.service;
 import java.io.File;
 import java.io.IOException;
 import java.time.Instant;
-
 import reactor.core.publisher.Mono;
 
 public interface FileuploadService {
-    public static interface UploadedFile extends AutoCloseable {
-        @Override
-        void close();
+  UploadingFileSlot anounceUpload(long expectedSize, String suffix);
 
-        File getFile();
+  boolean uploadFragment(long handle, byte[] data) throws IOException;
 
-    }
+  public static interface UploadedFile extends AutoCloseable {
+    @Override
+    void close();
 
-    public static interface UploadingFileSlot {
+    File getFile();
+  }
 
-        Mono<UploadedFile> getData();
+  public static interface UploadingFileSlot {
 
-        long getHandle();
+    Mono<UploadedFile> getData();
 
-        void setProcessTimeout(Instant timeout);
+    long getHandle();
 
-        void setUploadTimeout(Instant timeout);
-    }
+    void setProcessTimeout(Instant timeout);
 
-    UploadingFileSlot anounceUpload(long expectedSize, String suffix);
-
-    boolean uploadFragment(long handle, byte[] data) throws IOException;
+    void setUploadTimeout(Instant timeout);
+  }
 }

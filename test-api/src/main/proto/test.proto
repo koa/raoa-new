@@ -4,22 +4,22 @@ option java_package = "ch.bergturbenthal.raoa.service.file.upload.test";
 package raoa;
 
 service RequestFileUploadService {
-	rpc requestFileUpload (FileUploadRequest) returns (FileUploadResponse);
+    rpc requestFileUpload (FileUploadRequest) returns (FileUploadResponse);
 }
 service RequestFileDownloadService {
-	rpc requestFileDownload (FileDownloadRequest) returns (FileDownloadResponse);
+    rpc requestFileDownload (FileDownloadRequest) returns (FileDownloadResponse);
 }
 
-message FileUploadRequest{
-	string filename = 1;
-	int64 filesize = 2;
+message FileUploadRequest {
+    string filename = 1;
+    int64 filesize = 2;
 }
-message FileUploadResponse{
-	int64 uploadHandle = 1;
+message FileUploadResponse {
+    int64 uploadHandle = 1;
 }
 
-message FileDownloadRequest{
+message FileDownloadRequest {
 }
-message FileDownloadResponse{
-	int64 downloadHandle = 1;
+message FileDownloadResponse {
+    int64 downloadHandle = 1;
 }

@@ -5,9 +5,9 @@ metadata:
   namespace: raoa-dev
 spec:
   ports:
-  - port: 8080
-    protocol: TCP
-    targetPort: 8080
+    - port: 8080
+      protocol: TCP
+      targetPort: 8080
   selector:
     run: raoa
 ---
@@ -30,63 +30,63 @@ spec:
         run: raoa
     spec:
       containers:
-      - image: docker-snapshot.berg-turbenthal.ch/raoa-new-server:@git.commit.id.describe-short@
-        imagePullPolicy: Always
-        name: test
-        ports:
-        - containerPort: 8080
-        env:
-        - name: RAOA_ADMIN_EMAIL
-          value: andreas.koenig@berg-turbenthal.ch
-        - name: GOOGLE-CLIENT-ID
-          valueFrom:
-            secretKeyRef:
-              name: google
-              key: clientId
-        - name: GOOGLE-CLIENT-SECRET
-          valueFrom:
-            secretKeyRef:
-              name: google
-              key: clientSecret
-        - name: APPLICATION-ROOT-URL
-          value: https://raoa-dev.berg-turbenthal.ch/
-        - name: DEBUG
-          value: "true"
-        resources:
-          requests:
-            cpu: 2
-            memory: 3Gi
-          limits:
-            cpu: 4
-            memory: 4Gi
-        volumeMounts:
-        - mountPath: "/data"
-          name: data
+        - image: docker-snapshot.berg-turbenthal.ch/raoa-new-server:@git.commit.id.describe-short@
+          imagePullPolicy: Always
+          name: test
+          ports:
+            - containerPort: 8080
+          env:
+            - name: RAOA_ADMIN_EMAIL
+              value: andreas.koenig@berg-turbenthal.ch
+            - name: GOOGLE-CLIENT-ID
+              valueFrom:
+                secretKeyRef:
+                  name: google
+                  key: clientId
+            - name: GOOGLE-CLIENT-SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: google
+                  key: clientSecret
+            - name: APPLICATION-ROOT-URL
+              value: https://raoa-dev.berg-turbenthal.ch/
+            - name: DEBUG
+              value: "true"
+          resources:
+            requests:
+              cpu: 2
+              memory: 3Gi
+            limits:
+              cpu: 4
+              memory: 4Gi
+          volumeMounts:
+            - mountPath: "/data"
+              name: data
       initContainers:
-      - image: busybox
-        name: mkdirs
-        command: 
-        - mkdir
-        - -p 
-        - /data/config
-        - /data/photos 
-        volumeMounts:
-        - mountPath: "/data"
-          name: data
-      - image: busybox
-        name: chown
-        command: 
-        - chown 
-        - 'nobody.nogroup'
-        - /data/config
-        - /data/photos
-        volumeMounts:
-        - mountPath: "/data"
-          name: data
+        - image: busybox
+          name: mkdirs
+          command:
+            - mkdir
+            - -p
+            - /data/config
+            - /data/photos
+          volumeMounts:
+            - mountPath: "/data"
+              name: data
+        - image: busybox
+          name: chown
+          command:
+            - chown
+            - 'nobody.nogroup'
+            - /data/config
+            - /data/photos
+          volumeMounts:
+            - mountPath: "/data"
+              name: data
       volumes:
-      - name: data
-        persistentVolumeClaim:
-          claimName: raoa-data
+        - name: data
+          persistentVolumeClaim:
+            claimName: raoa-data
 ---
 kind: PersistentVolumeClaim
 apiVersion: v1
@@ -110,13 +110,13 @@ metadata:
     ingress.kubernetes.io/proxy-body-size: 512m
 spec:
   tls:
-  - secretName: raoa-dev-tls
-    hosts:
-    - raoa-dev.berg-turbenthal.ch
+    - secretName: raoa-dev-tls
+      hosts:
+        - raoa-dev.berg-turbenthal.ch
   rules:
-  - host: raoa-dev.berg-turbenthal.ch
-    http:
-      paths:
-      - backend:
-          serviceName: raoa
-          servicePort: 8080
+    - host: raoa-dev.berg-turbenthal.ch
+      http:
+        paths:
+          - backend:
+              serviceName: raoa
+              servicePort: 8080

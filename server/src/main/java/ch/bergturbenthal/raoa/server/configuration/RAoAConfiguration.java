@@ -5,8 +5,8 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class RAoAConfiguration {
-    @Bean
-    public RaoaProperties raoaProperties() {
-        return new RaoaProperties();
-    }
+  @Bean
+  public RaoaProperties raoaProperties() {
+    return new RaoaProperties();
+  }
 }

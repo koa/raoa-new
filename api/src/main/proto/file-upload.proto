@@ -5,20 +5,20 @@ option java_multiple_files = true;
 package raoa;
 
 service FileUploadService {
-	rpc sendFragment (FragmentRequest) returns (FragmentResponse);
+    rpc sendFragment (FragmentRequest) returns (FragmentResponse);
 }
 
 message FragmentRequest {
-	int64 sendHandle = 1;
-	bytes data = 2;
+    int64 sendHandle = 1;
+    bytes data = 2;
 }
 
 message FragmentResponse {
-	enum ResponseState{
-		OK = 0;
-		UNKNOWN_HANDLE = 1;
-		TEMPORARY_ERROR = 2;
-		PERMANENT_ERROR = 3;
-	}
-	ResponseState state = 1;
+    enum ResponseState {
+        OK = 0;
+        UNKNOWN_HANDLE = 1;
+        TEMPORARY_ERROR = 2;
+        PERMANENT_ERROR = 3;
+    }
+    ResponseState state = 1;
 }

@@ -6,30 +6,30 @@ package raoa;
 
 import "google/protobuf/empty.proto";
 service ThumbnailerService {
-	rpc getCapabilities (google.protobuf.Empty) returns (ThumbnailerCapabilities);
-	rpc generateThumbnail (GenerationRequest) returns (stream GenerationResponse);
+    rpc getCapabilities (google.protobuf.Empty) returns (ThumbnailerCapabilities);
+    rpc generateThumbnail (GenerationRequest) returns (stream GenerationResponse);
 }
 
 message ThumbnailerCapabilities {
-	repeated string regex = 1;
+    repeated string regex = 1;
 }
 
 message GenerationRequest {
-	string filename = 1;
-	int64 length = 2;
+    string filename = 1;
+    int64 length = 2;
 }
 
 message GenerationResponse {
-	oneof response {
-		int64 fileUploadHandle = 1;
-		FileGeneratedMessage fileReadyResponse = 2;
-		ServiceOverloadedResponse overloadedResponse = 3;
-	}
+    oneof response {
+        int64 fileUploadHandle = 1;
+        FileGeneratedMessage fileReadyResponse = 2;
+        ServiceOverloadedResponse overloadedResponse = 3;
+    }
 }
 
 message FileGeneratedMessage {
-	int64 fileDownloadHandle = 1;
-	int64 fileSize = 2;
+    int64 fileDownloadHandle = 1;
+    int64 fileSize = 2;
 }
 
 message ServiceOverloadedResponse {
