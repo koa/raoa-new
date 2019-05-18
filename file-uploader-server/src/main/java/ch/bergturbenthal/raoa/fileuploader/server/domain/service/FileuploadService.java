@@ -10,14 +10,14 @@ public interface FileuploadService {
 
   boolean uploadFragment(long handle, byte[] data) throws IOException;
 
-  public static interface UploadedFile extends AutoCloseable {
+  interface UploadedFile extends AutoCloseable {
     @Override
     void close();
 
     File getFile();
   }
 
-  public static interface UploadingFileSlot {
+  interface UploadingFileSlot {
 
     Mono<UploadedFile> getData();
 
